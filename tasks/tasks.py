@@ -1,21 +1,15 @@
 import os
 from typing import List
 
-import arxiv
-from celery import Celery, shared_task
-import logging
+from celery import Celery
 
 from sqlalchemy.orm import sessionmaker
 
-from data_sources.data_extractor import DataExtractor
 from db import Article, Author, engine
 from schemas import ArticleListItem
 
-app = Celery(
-    'tasks',  # Name of your Celery app
-    broker=os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0"),  # Adjust if using a different Redis instance
-    backend=os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0"),  # Adjust if using a different Redis instance
-)
+celery_broker_url = os.environ.get('CELERY_BROKER_URL', "redis://localhost:6379/0")
+app = Celery('tasks', broker=celery_broker_url, backend=celery_broker_url)
 
 
 @app.task
