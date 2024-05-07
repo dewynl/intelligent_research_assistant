@@ -13,11 +13,8 @@ create_all_tables()
 
 app = FastAPI()
 
-celery_app = Celery(
-    'tasks',  # Name of your Celery app
-    broker=os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0"),  # Adjust if using a different Redis instance
-    backend=os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0"),  # Adjust if using a different Redis instance
-)
+celery_broker_url = os.environ.get('CELERY_BROKER_URL', "redis://localhost:6379/0")
+celery_app = Celery('tasks', broker=celery_broker_url, backend=celery_broker_url)
 
 @app.get("/")
 async def root():
