@@ -35,6 +35,7 @@ Explain how to run the automated tests for this system.
 - `celery -A celery_setup.celery_app worker --loglevel=info` - Run the Celery worker
 - `celery -A celery_setup.celery_app beat --loglevel=info` - Run the Celery beat
 - `celery -A celery_setup.celery_app flower` - Run the Celery flower
+- `export FLOWER_UNAUTHENTICATED_API=true` - Allow Flower to run without authentication
 
 ## Built With
 
