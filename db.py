@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 DATABASE_NAME = "intelligent_research_assistant"
 DATABASE_URL = f"sqlite:///{DATABASE_NAME}.sqlite"
 
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=False)
 Base = declarative_base()
 
 

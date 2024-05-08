@@ -1,18 +1,12 @@
-import os
 from typing import List
-
-from celery import Celery
-
 from sqlalchemy.orm import sessionmaker
 
 from db import Article, Author, engine
 from schemas import ArticleListItem
-
-celery_broker_url = os.environ.get('CELERY_BROKER_URL', "redis://localhost:6379/0")
-app = Celery('tasks', broker=celery_broker_url, backend=celery_broker_url)
+from celery_setup import celery_app
 
 
-@app.task
+@celery_app.task
 def save_articles_data(articles: List[ArticleListItem], source: str):
     session = sessionmaker(bind=engine)()
 

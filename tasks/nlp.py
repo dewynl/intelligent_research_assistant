@@ -1,18 +1,15 @@
 import os
 import spacy
 from collections import Counter
+
+from celery import Celery
 from spacy.matcher import PhraseMatcher
 from spacy.tokens import Doc
-from celery import Celery
-
-app = Celery(
-    "tasks", broker=os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
-)
+from celery_setup import celery_app
 
 nlp = spacy.load("en_core_web_sm")  # Load a small English NLP model
 
-
-@app.task
+@celery_app.task
 def extract_keywords(sentence, n=2):
     # Process the input sentence
     doc = nlp(sentence)
