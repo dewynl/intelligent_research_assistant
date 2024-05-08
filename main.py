@@ -1,8 +1,6 @@
 import json
 import logging
-import os
 from fastapi import FastAPI, Request
-from celery import Celery
 
 from data_sources.data_extractor import DataExtractor
 from db import create_all_tables
@@ -10,11 +8,7 @@ from db import create_all_tables
 logging.basicConfig(level=logging.DEBUG)
 
 create_all_tables()
-
 app = FastAPI()
-
-celery_broker_url = os.environ.get('CELERY_BROKER_URL', "redis://localhost:6379/0")
-celery_app = Celery('tasks', broker=celery_broker_url, backend=celery_broker_url)
 
 @app.get("/")
 async def root():
@@ -49,4 +43,3 @@ def extract_data(request: Request, platform:str):
     else:
         logging.error(f"Unsupported platform: {platform}")
         return "Unsupported platform"
-

@@ -1,4 +1,6 @@
-from sqlalchemy import ForeignKey, Table
+import enum
+from datetime import datetime
+from sqlalchemy import ForeignKey, Table, DateTime, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.orm import relationship
@@ -27,6 +29,12 @@ class Author(Base):
     )
 
 
+class ArticleStatus(enum.Enum):
+    NOT_PROCESSED = "not_processed"
+    IN_PROGRESS = "in_progress"
+    DONE = "done"
+
+
 class Article(Base):
     __tablename__ = "articles"
     id = Column(Integer, primary_key=True)
@@ -36,6 +44,9 @@ class Article(Base):
     doi = Column(String, nullable=True)
     source = Column(String)
     source_id = Column(String)
+    added_at = Column(DateTime, default=datetime.utcnow)
+    keyword_extraction_status = Column(Enum(ArticleStatus), default=ArticleStatus.NOT_PROCESSED)
+    related_articles_status = Column(Enum(ArticleStatus), default=ArticleStatus.NOT_PROCESSED)
     authors = relationship(
         "Author", secondary=authors_articles_association, back_populates="articles"
     )
