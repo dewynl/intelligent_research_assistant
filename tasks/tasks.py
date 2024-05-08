@@ -1,3 +1,4 @@
+import logging
 from typing import List
 from sqlalchemy.orm import sessionmaker
 
@@ -5,6 +6,10 @@ from db import Article, Author, engine
 from schemas import ArticleListItem
 from celery_setup import celery_app
 
+
+@celery_app.task
+def test_periodic_task():
+    logging.info("This is a test periodic task")
 
 @celery_app.task
 def save_articles_data(articles: List[ArticleListItem], source: str):
@@ -42,3 +47,12 @@ def save_articles_data(articles: List[ArticleListItem], source: str):
         # Commit the changes to the database
         session.commit()
 
+
+
+@celery_app.task
+def poll_newly_added_articles():
+    logging.info("Polling for new articles that needs processing...")
+
+
+
+    pass

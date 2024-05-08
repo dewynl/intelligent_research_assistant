@@ -27,9 +27,14 @@ A step by step series of examples that tell you how to get a development environ
 
 Explain how to run the automated tests for this system.
 
-## Deployment
+## Helpful Commands
 
-Add additional notes about how to deploy this on a live system.
+- `docker compose build` - Build the project in Docker
+- `docker compose up` - Run the project in Docker
+- `uvicorn main:app --reload` - Run the FastAPI server
+- `celery -A celery_setup.celery_app worker --loglevel=info` - Run the Celery worker
+- `celery -A celery_setup.celery_app beat --loglevel=info` - Run the Celery beat
+- `celery -A celery_setup.celery_app flower` - Run the Celery flower
 
 ## Built With
 
@@ -46,6 +51,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc
+- TBD
