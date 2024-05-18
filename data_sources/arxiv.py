@@ -20,6 +20,7 @@ def format_arxiv_result(results) -> List[ArticleListItem]:
             title=result.title,
             authors=[a.name for a in result.authors],
             abstract=result.summary,
+            categories=result.categories,
             link=link,
             doi=result.doi,
         )

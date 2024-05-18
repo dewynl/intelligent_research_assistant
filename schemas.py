@@ -7,5 +7,6 @@ class ArticleListItem(BaseModel):
     title: str
     authors: List[str]
     abstract: str
+    categories: List[str]
     link: str
     doi: Optional[str]
