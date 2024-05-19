@@ -23,6 +23,7 @@ def format_arxiv_result(results) -> List[ArticleListItem]:
             categories=result.categories,
             link=link,
             doi=result.doi,
+            pdf_url=result.pdf_url,
         )
         formatted_results.append(formatted_result)
 

@@ -1,7 +1,8 @@
-import pandas as pd
 import logging
+import os
 
 import arxiv
+import pandas as pd
 
 from data_sources.arxiv import format_arxiv_result
 
@@ -35,9 +36,10 @@ ARXIV_SEARCH_TERMS = {
     ]
 }
 
+
 def get_arxiv_training_data():
     all_results = []
-    client = arxiv.Client()
+    client = arxiv.Client(delay_seconds=10)
 
     for category, terms in ARXIV_SEARCH_TERMS.items():
         for term in terms:
@@ -57,7 +59,17 @@ def get_arxiv_training_data():
             all_results.extend(results_as_dictionaries)
 
     # Create a pandas DataFrame from the list of dictionaries
-    df = pd.DataFrame(all_results)
+    new_data = pd.DataFrame(all_results)
+
+    # If the file exists, load the existing data and append the new data to it
+    if os.path.isfile("arxiv_training_data.csv"):
+        df = pd.read_csv("arxiv_training_data.csv")
+        df = pd.concat([df, new_data])
+    else:
+        df = new_data
+
+    # Remove duplicates
+    df = df.drop_duplicates()
 
     # Save the DataFrame to a CSV file
     df.to_csv("arxiv_training_data.csv", index=False)

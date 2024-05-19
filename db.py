@@ -42,6 +42,7 @@ class Article(Base):
     abstract = Column(String)
     link = Column(String)
     doi = Column(String, nullable=True)
+    pdf_url = Column(String, nullable=True)
     source = Column(String)
     source_id = Column(String)
     added_at = Column(DateTime, default=datetime.utcnow)

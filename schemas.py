@@ -10,3 +10,4 @@ class ArticleListItem(BaseModel):
     categories: List[str]
     link: str
     doi: Optional[str]
+    pdf_url: Optional[str]
