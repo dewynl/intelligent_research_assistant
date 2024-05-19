@@ -1,6 +1,7 @@
 import json
 import logging
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 
 from data_sources.data_extractor import DataExtractor
 from db import create_all_tables
@@ -10,9 +11,20 @@ logging.basicConfig(level=logging.DEBUG)
 create_all_tables()
 app = FastAPI()
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return "Hello World"
 
 
 @app.get("/hello/{name}")
