@@ -157,3 +157,6 @@ yarn.lock
 intelligent_research_assistant.sqlite
 .idea
 .vscode
+
+# Joblib files
+*.joblib
