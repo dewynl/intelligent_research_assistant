@@ -25,10 +25,20 @@ const SearchBar = ({onSearchTriggered, ...props}: SearchBarProps) => {
   return (
     <div className={containerStyles}>
       <>
-        <Input type='text' className={inputStyles} placeholder='Search' onChange={(e) => setSearch(e.target.value)} />
+        <Input type='text' className={inputStyles} placeholder='Search' onChange={(e) => setSearch(e.target.value)} 
+          onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+               onSearchTriggered(search)
+              }
+            }}
+          />
         <IconButton onClick={() => onSearchTriggered(search)} >
           <SearchIcon />
         </IconButton>
+      </>
+
+      <>
+      
       </>
     </div>
   );

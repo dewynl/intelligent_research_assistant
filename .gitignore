@@ -154,7 +154,7 @@ yarn.lock
 .babel.config.mjs
 
 # Other
-intelligent_research_assistant.sqlite
+*.sqlite
 .idea
 .vscode
 

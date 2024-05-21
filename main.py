@@ -1,10 +1,13 @@
-import json
 import logging
-from fastapi import FastAPI, Request
+from typing import List
+
+from fastapi import FastAPI, Request, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
 from data_sources.data_extractor import DataExtractor
-from db import create_all_tables
+from db import create_all_tables, get_db, Article
+from sqlalchemy import func
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -45,13 +48,18 @@ async def search_data(request: Request, platform:str):
         return []
 
 
-@app.get("/extract/{platform}")
-def extract_data(request: Request, platform:str):
-    article_ids = json.loads(request.query_params.get('article_ids', ''))
+@app.get('/search')
+async def search_articles(request: Request, db: Session = Depends(get_db)):
+    search_term = request.query_params.get('query', '')
+    found_articles = db.query(Article).filter(func.lower(Article.title).contains(search_term.lower()))
+    return found_articles.all()
+
+@app.post("/extract/{platform}")
+def extract_data(_: Request, platform: str, article_ids: List[str] = Body(...)):
     extractor = DataExtractor.get_extractor_class(platform=platform)
     if extractor:
-        results = extractor.extract_data(article_ids)
-        return results
+        process_id = extractor.extract_data(article_ids)
+        return { 'process_id': str(process_id) }
     else:
         logging.error(f"Unsupported platform: {platform}")
         return "Unsupported platform"

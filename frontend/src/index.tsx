@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import HomePage from './pages/home/HomePage';
+import Researches from './pages/researches/Researches';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path: "/researches",
+    element: <Researches />,
   },
 ]);
 
