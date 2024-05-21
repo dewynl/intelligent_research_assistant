@@ -10,8 +10,6 @@ from celery_setup import celery_app
 def save_research_data(articles: List[ArticleListItem], source: str):
     session = sessionmaker(bind=engine)()
 
-    print('asdasasdasdasd')
-
     try:
         # Start a new transaction
         trans = session.begin()
@@ -19,15 +17,19 @@ def save_research_data(articles: List[ArticleListItem], source: str):
         research = Research()
         session.add(research)
         for article_list_item in articles:
-            article = Article(
-                title=article_list_item['title'],
-                abstract=article_list_item['abstract'],
-                link=article_list_item['link'],
-                doi=article_list_item['doi'],
-                pdf_url=article_list_item['pdf_url'],
-                source=source,
-                source_id=article_list_item['id'],
-            )
+            existing_article = session.query(Article).filter_by(source_id='2304.05133v2').first()
+            if existing_article:
+                article = existing_article
+            else:
+                article = Article(
+                    title=article_list_item['title'],
+                    abstract=article_list_item['abstract'],
+                    link=article_list_item['link'],
+                    doi=article_list_item['doi'],
+                    pdf_url=article_list_item['pdf_url'],
+                    source=source,
+                    source_id=article_list_item['id'],
+                )
 
             # Save the article to the database
             session.add(article)
@@ -64,7 +66,5 @@ def save_research_data(articles: List[ArticleListItem], source: str):
 @celery_app.task
 def poll_newly_added_articles():
     logging.info("Polling for new articles that needs processing...")
-
-
-
     pass
+
