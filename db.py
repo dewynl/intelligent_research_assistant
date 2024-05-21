@@ -37,7 +37,9 @@ class Research(Base):
     __tablename__ = "researches"
     id = Column(Integer, primary_key=True)
     articles = relationship("Article", secondary=researches_articles_association, back_populates='researches')
+    research_category = Column(String, nullable=True)
     research_process_status = Column(Enum(Status), default=Status.NOT_PROCESSED)
+    added_at = Column(DateTime, default=datetime.utcnow)
 
 
 class Author(Base):
