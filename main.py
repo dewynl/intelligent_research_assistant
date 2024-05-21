@@ -3,10 +3,10 @@ from typing import List
 
 from fastapi import FastAPI, Request, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, subqueryload
 
 from data_sources.data_extractor import DataExtractor
-from db import create_all_tables, get_db, Article
+from db import create_all_tables, get_db, Article, Research
 from sqlalchemy import func
 
 logging.basicConfig(level=logging.DEBUG)
@@ -63,3 +63,9 @@ def extract_data(_: Request, platform: str, article_ids: List[str] = Body(...)):
     else:
         logging.error(f"Unsupported platform: {platform}")
         return "Unsupported platform"
+
+
+@app.get('/researches')
+def get_researches(_: Request, db: Session = Depends(get_db)):
+    researches = db.query(Research).all()
+    return researches
