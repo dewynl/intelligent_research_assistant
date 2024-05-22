@@ -11,6 +11,9 @@ def extract_keywords(text):
     stop_words = set(stopwords.words('english') + list(string.punctuation))
     filtered_words = [word for word in words if word not in stop_words]
 
+    if len(filtered_words) == 1:
+        return filtered_words
+
     # Create a dictionary to store word co-occurrences
     co_occurrences = defaultdict(lambda: defaultdict(int))
 
