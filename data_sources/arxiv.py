@@ -5,6 +5,7 @@ from typing import List
 
 from background_processes.nlp.extract_keywords import extract_keywords
 from background_processes.create_research import save_research_data
+from celery_setup import celery_app
 from data_sources.data_extractor import DataExtractor
 from schemas import ArticleListItem
 
@@ -35,6 +36,7 @@ def format_arxiv_result(results) -> List[ArticleListItem]:
 
     return formatted_results
 
+
 class ArxivExtractor(DataExtractor):
     def __init__(self):
         super().__init__()
@@ -54,13 +56,19 @@ class ArxivExtractor(DataExtractor):
         return formatted_results
 
     def extract_data(self, ids: List[str]):
-        logging.info(f"Processing article with ids: {ids}")
-        search_by_id = arxiv.Search(id_list=ids)
-
-        articles_result = self.client.results(search_by_id)
-        formatted_articles = format_arxiv_result(articles_result)
-        articles_as_dict = [dict(fa) for fa in formatted_articles]
-
-        process_id = save_research_data.delay(articles_as_dict, 'arxiv')
+        process_id = process_new_research_submission.delay(ids)
         return process_id
 
+
+@celery_app.task
+def process_new_research_submission(ids):
+    arxiv_client = arxiv.Client()
+    logging.info(f"Processing article with ids: {ids}")
+    search_by_id = arxiv.Search(id_list=ids)
+
+    articles_result = arxiv_client.results(search_by_id)
+    formatted_articles = format_arxiv_result(articles_result)
+    articles_as_dict = [dict(fa) for fa in formatted_articles]
+
+    process_id = save_research_data.delay(articles_as_dict, 'arxiv')
+    return process_id
