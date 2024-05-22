@@ -68,7 +68,7 @@ const ResearchList = () => {
   
   };
 
-  if (error) return <div>Error: {error.message}</div>;
+  if (!data || error) return <div>Error: {error?.message}</div>;
 
   return (
     <div className={styles.container}>

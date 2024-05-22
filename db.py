@@ -1,6 +1,7 @@
+import json
 import enum
 from datetime import datetime
-from sqlalchemy import ForeignKey, Table, DateTime, Enum, ARRAY
+from sqlalchemy import ForeignKey, Table, DateTime, TypeDecorator, Enum, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Float, create_engine
 from sqlalchemy.orm import relationship
@@ -32,6 +33,15 @@ class Status(enum.Enum):
     NOT_PROCESSED = "not_processed"
     IN_PROGRESS = "in_progress"
     DONE = "done"
+
+class ArrayType(TypeDecorator):
+    impl = String
+
+    def process_bind_param(self, value, dialect):
+        return json.dumps(value)
+
+    def process_result_value(self, value, dialect):
+        return json.loads(value)
 
 class Research(Base):
     __tablename__ = "researches"
@@ -67,8 +77,8 @@ class Article(Base):
     # fields to store pre-processed data.
     cleaned_title = Column(String, nullable=True)
     cleaned_abstract = Column(String, nullable=True)
-    title_vector = Column(ARRAY(Float), nullable=True)
-    abstract_vector = Column(ARRAY(Float), nullable=True)
+    title_vector = Column(ArrayType, nullable=True)
+    abstract_vector = Column(ArrayType, nullable=True)
 
 def create_all_tables():
     Base.metadata.create_all(engine)

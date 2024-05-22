@@ -3,10 +3,10 @@ import logging
 import arxiv
 from typing import List
 
+from background_processes.nlp.extract_keywords import extract_keywords
+from background_processes.create_research import save_research_data
 from data_sources.data_extractor import DataExtractor
 from schemas import ArticleListItem
-from tasks.nlp import extract_keywords
-from tasks.tasks import save_research_data
 
 logging.basicConfig(level=logging.DEBUG)
 def extract_id_from_url(url):
