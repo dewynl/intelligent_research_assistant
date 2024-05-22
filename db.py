@@ -1,8 +1,8 @@
 import enum
 from datetime import datetime
-from sqlalchemy import ForeignKey, Table, DateTime, Enum
+from sqlalchemy import ForeignKey, Table, DateTime, Enum, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, String, Float, create_engine
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
 
@@ -64,6 +64,11 @@ class Article(Base):
     authors = relationship("Author", secondary=authors_articles_association, back_populates="articles")
     researches = relationship("Research", secondary=researches_articles_association, back_populates='articles')
 
+    # fields to store pre-processed data.
+    cleaned_title = Column(String, nullable=True)
+    cleaned_abstract = Column(String, nullable=True)
+    title_vector = Column(ARRAY(Float), nullable=True)
+    abstract_vector = Column(ARRAY(Float), nullable=True)
 
 def create_all_tables():
     Base.metadata.create_all(engine)
