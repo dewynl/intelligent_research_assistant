@@ -38,9 +38,13 @@ class ArrayType(TypeDecorator):
     impl = String
 
     def process_bind_param(self, value, dialect):
+        if value is None:
+            return '[]'  # Return an empty JSON array
         return json.dumps(value)
 
     def process_result_value(self, value, dialect):
+        if value is None:
+            return []  # Return an empty array
         return json.loads(value)
 
 class Research(Base):
