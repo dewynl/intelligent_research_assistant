@@ -1,3 +1,4 @@
+import json
 import logging
 
 from background_processes.nlp.extract_keywords import extract_keywords
@@ -22,9 +23,9 @@ def process_new_research():
             processed_abstract, vectorized_abstract = preprocess_text(article.abstract)
 
             article.cleaned_title = processed_title
-            article.title_vector = vectorized_title
+            article.title_vector = json.dumps(vectorized_title.toarray().tolist())
             article.cleaned_abstract = processed_abstract
-            article.abstract_vector = vectorized_abstract
+            article.abstract_vector = json.dumps(vectorized_abstract.toarray().tolist())
 
             all_abstracts += article.abstract + '\n\n'
 
@@ -54,5 +55,4 @@ def summarize_research():
         db_conn.rollback()
     finally:
         db_conn.close()
-
 
