@@ -3,13 +3,14 @@ from nltk.tokenize import word_tokenize
 from collections import defaultdict
 import string
 
+
 def extract_keywords(text):
     # Tokenize the text into words
     words = word_tokenize(text.lower())
 
-    # Remove punctuation and stopwords
+    # Remove punctuation, stopwords, and non-alphabetic words
     stop_words = set(stopwords.words('english') + list(string.punctuation))
-    filtered_words = [word for word in words if word not in stop_words]
+    filtered_words = [word for word in words if word.isalpha() and word not in stop_words]
 
     if len(filtered_words) == 1:
         return filtered_words
@@ -38,8 +39,6 @@ def extract_keywords(text):
     top_keywords = sorted_words[:top_n]
 
     return top_keywords
-
-
 
 def extract_keywords_with_synonyms(text):
     # Tokenize the text into words
