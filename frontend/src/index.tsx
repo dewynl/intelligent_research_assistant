@@ -13,6 +13,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import './index.css';
+import ResearchPage from './pages/researches/ResearchPage';
 
 
 const root = ReactDOM.createRoot(
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
     path: "/researches",
     element: <Researches />,
   },
+  {
+    path: "/researches/:researchId",
+    element: <ResearchPage />,
+  }
 ]);
 
 

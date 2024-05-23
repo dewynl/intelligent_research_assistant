@@ -2,7 +2,7 @@ import logging
 from typing import List
 from fastapi import FastAPI, WebSocket, Request, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from data_sources.data_extractor import DataExtractor
 from db import create_all_tables, get_db, Article, Research
@@ -68,3 +68,10 @@ def extract_data(_: Request, platform: str, article_ids: List[str] = Body(...)):
 def get_researches(_: Request, db: Session = Depends(get_db)):
     researches = db.query(Research).all()
     return researches
+
+
+@app.get('/research/{research_id}')
+def get_research(_: Request, research_id: str, db_conn: Session = Depends(get_db)):
+    research = db_conn.query(Research).options(joinedload(Research.articles).joinedload(Article.authors)).filter_by(id=research_id).first()
+    print(research.id)
+    return research

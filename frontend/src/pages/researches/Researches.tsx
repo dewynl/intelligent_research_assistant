@@ -3,13 +3,8 @@ import { css } from '@emotion/css';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../axios';
 import { CircularProgress } from '@mui/material';
-
-const loadingContainerStyles = css`
-  display: flex;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-`;
+import { useNavigate } from 'react-router-dom';
+import Loading from '../../components/Loading';
 
 const styles = {
   container: css`
@@ -48,6 +43,7 @@ const styles = {
 };
 
 const Researches = () => {
+  const navigate = useNavigate();
   const [researches, setResearches] = useState<any[]>([])
 
   const { isLoading, error, data } = useQuery({
@@ -57,9 +53,7 @@ const Researches = () => {
   });
 
   const handleResearchClick = (researchId: string) => {
-    // Handle click event for the research container
-    console.log(`Clicked on research with ID ${researchId}`);
-    // Add your logic here to navigate to the research details page or show more information
+    navigate(`/researches/${researchId}`);
   };
 
   useEffect(() => {
@@ -68,11 +62,8 @@ const Researches = () => {
 
   if (isLoading) {
     return (
-      <div className={loadingContainerStyles}>
-        <CircularProgress />
-      </div>
+      <Loading />
     );
-  
   };
 
   if (!researches || error) return <div>Error: {error?.message}</div>;
