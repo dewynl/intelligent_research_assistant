@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../axios';
 import { CircularProgress } from '@mui/material';
 import { css } from '@emotion/css';
+import { io } from 'socket.io-client';
 
 const loadingContainerStyles = css`
   display: flex;
@@ -47,7 +48,9 @@ const styles = {
   `,
 };
 
-const ResearchList = () => {
+const Researches = () => {
+  const [researches, setResearches] = useState<any[]>([])
+
   const { isLoading, error, data } = useQuery({
     queryKey: ['getResearches'],
     queryFn: () => axiosInstance.get('/researches').then((res) => res.data),
@@ -59,6 +62,10 @@ const ResearchList = () => {
     // Add your logic here to navigate to the research details page or show more information
   };
 
+  useEffect(() => {
+    setResearches(data)
+  }, [data])
+
   if (isLoading) {
     return (
       <div className={loadingContainerStyles}>
@@ -68,13 +75,13 @@ const ResearchList = () => {
   
   };
 
-  if (!data || error) return <div>Error: {error?.message}</div>;
+  if (!researches || error) return <div>Error: {error?.message}</div>;
 
   return (
     <div className={styles.container}>
       <h2>Research List</h2>
       <ul className={styles.list}>
-        {data.map((research: any) => (
+        {researches.map((research: any) => (
           <li
             key={research.id}
             className={`${styles.listItem} ${styles.clickable}`}
@@ -83,7 +90,7 @@ const ResearchList = () => {
             <div className={styles.research}>
               <span className={styles.researchId}>Research ID: {research.id}</span>
               <span className={styles.researchStatus}>
-                Status: {research.research_process_status}
+                Status: {research.research_preprocess_status}
               </span>
             </div>
           </li>
@@ -93,4 +100,4 @@ const ResearchList = () => {
   );
 };
 
-export default ResearchList;
+export default Researches;
