@@ -4,6 +4,7 @@ from fastapi import FastAPI, WebSocket, Request, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session, joinedload
 
+from background_processes.nlp.predict_category import predict_article_categories
 from data_sources.data_extractor import DataExtractor
 from db import create_all_tables, get_db, Article, Research
 from sqlalchemy import func
@@ -75,3 +76,20 @@ def get_research(_: Request, research_id: str, db_conn: Session = Depends(get_db
     research = db_conn.query(Research).options(joinedload(Research.articles).joinedload(Article.authors)).filter_by(id=research_id).first()
     print(research.id)
     return research
+
+
+@app.get('/research/{research_id}/inferred-categories')
+def get_research_inferred_categories(_: Request, research_id: str, db_conn: Session = Depends(get_db)):
+    research = db_conn.query(Research).filter_by(id=research_id).first()
+
+    combined_articles = ""
+    for article in research.articles:
+        combined_articles += article.abstract + '\n\n'
+
+    predicted_classes = predict_article_categories(combined_articles)
+    return predicted_classes
+
+
+@app.get('/research/{research_id}/find-related-articles')
+def find_related_articles(_: Request, research_id: str, db_conn: Session = Depends(get_db)):
+    pass
