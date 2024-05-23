@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { css } from '@emotion/css';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../axios';
 import { CircularProgress } from '@mui/material';
-import { css } from '@emotion/css';
-import { io } from 'socket.io-client';
 
 const loadingContainerStyles = css`
   display: flex;
@@ -54,6 +53,7 @@ const Researches = () => {
   const { isLoading, error, data } = useQuery({
     queryKey: ['getResearches'],
     queryFn: () => axiosInstance.get('/researches').then((res) => res.data),
+    refetchInterval: 2000,
   });
 
   const handleResearchClick = (researchId: string) => {
