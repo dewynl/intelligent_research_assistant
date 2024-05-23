@@ -2,6 +2,7 @@ import re
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def preprocess_text(text):
@@ -25,4 +26,8 @@ def preprocess_text(text):
     # Join tokens back into a string
     cleaned_text = ' '.join(tokens)
 
-    return cleaned_text
+    # Vectorize the cleaned text
+    vectorizer = TfidfVectorizer()
+    vectorized_text = vectorizer.fit_transform([cleaned_text])
+
+    return cleaned_text, vectorized_text
