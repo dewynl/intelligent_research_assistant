@@ -17,7 +17,7 @@ def save_research_data(articles: List[ArticleListItem], source: str):
         research = Research()
         session.add(research)
         for article_list_item in articles:
-            existing_article = session.query(Article).filter_by(source_id='2304.05133v2').first()
+            existing_article = session.query(Article).filter_by(source_id=article_list_item['id']).first()
             if existing_article:
                 article = existing_article
             else:
