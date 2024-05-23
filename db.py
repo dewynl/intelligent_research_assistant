@@ -1,14 +1,20 @@
 import json
 import enum
 from datetime import datetime
+from pathlib import Path
+
 from sqlalchemy import ForeignKey, Table, DateTime, TypeDecorator, Enum, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Float, create_engine
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 from sqlalchemy.orm import sessionmaker
 
+BASE_DIR = Path(__file__).resolve().parent
+
 DATABASE_NAME = "intelligent_research_assistant"
-DATABASE_URL = f"sqlite:///{DATABASE_NAME}.sqlite"
+DATABASE_FILE = BASE_DIR / f"{DATABASE_NAME}.sqlite"
+DATABASE_URL = f"sqlite:///{DATABASE_FILE}"
+
 
 engine = create_engine(DATABASE_URL, echo=False)
 Base = declarative_base()
@@ -52,7 +58,10 @@ class Research(Base):
     id = Column(Integer, primary_key=True)
     articles = relationship("Article", secondary=researches_articles_association, back_populates='researches')
     research_category = Column(String, nullable=True)
-    research_process_status = Column(Enum(Status), default=Status.NOT_PROCESSED)
+    keywords = Column(ArrayType, nullable=True)
+    research_preprocess_status = Column(Enum(Status), default=Status.NOT_PROCESSED)
+    summary = Column(String, nullable=True)
+    summary_generation_status = Column(Enum(Status), default=Status.NOT_PROCESSED)
     added_at = Column(DateTime, default=datetime.utcnow)
 
 
