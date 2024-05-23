@@ -29,9 +29,6 @@ const ResearchPage = () => {
   
   if (error) return <div>Error: {error?.message}</div>;
 
-  console.log(data)
-
-  
   return (
     <div className="research-page">
       <h1>Research Details</h1>
