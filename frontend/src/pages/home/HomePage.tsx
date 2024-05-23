@@ -75,7 +75,7 @@ const HomePage: React.FC  = () => {
     if (saveArticles.isSuccess) {
       navigate('/researches');
     }
-  }, [saveArticles.isSuccess])
+  }, [saveArticles.isSuccess, navigate])
 
   return (
     <div className={homePageWrapper}>

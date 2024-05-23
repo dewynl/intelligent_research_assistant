@@ -1,9 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { format } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../axios';
 import Loading from '../../components/Loading';
+import { Box, Card, CardContent, Chip, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { css } from '@emotion/css';
+
+const pageContainer = css`
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+`;
+
+const topRowContainerStyles = css`
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+`;
 
 const ResearchPage = () => {
   const { researchId } = useParams();
@@ -30,63 +43,87 @@ const ResearchPage = () => {
   if (error) return <div>Error: {error?.message}</div>;
 
   return (
-    <div className="research-page">
-      <h1>Research Details</h1>
-      <div className="research-info">
-        <p>
-          <strong>Research ID:</strong> {research?.id}
-        </p>
-        <p>
-          <strong>Category:</strong> {research?.research_category}
-        </p>
-        <p>
-          <strong>Keywords:</strong> {research?.keywords.join(', ')}
-        </p>
-        <p>
-          <strong>Preprocess Status:</strong> {research?.research_preprocess_status}
-        </p>
-        <p>
-          <strong>Summary Generation Status:</strong> {research?.ummary_generation_status}
-        </p>
+    <div className={pageContainer}>
+      <Typography variant="h4" gutterBottom>
+        Research Details
+      </Typography>
+
+      <div className={topRowContainerStyles}>
+        <Card>
+          <CardContent>
+            <Typography>
+              <strong>Research ID:</strong> {research?.id}
+            </Typography>
+            <Typography>
+              <strong>Category:</strong> {research?.research_category}
+            </Typography>
+            <Typography>
+              <strong>Keywords:</strong>{' '}
+              {research?.keywords.map((keyword: string) => (
+                <Chip key={keyword} label={keyword} size="small" sx={{ mr: 1 }} />
+              ))}
+            </Typography>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Typography variant="h5" gutterBottom>
+              Summary
+            </Typography>
+            <Typography>{research?.summary}</Typography>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="research-summary">
-        <h2>Summary</h2>
-        <p>{research?.summary}</p>
-      </div>
-
-      <div className="research-articles">
-        <h2>Related Articles</h2>
+      <Box mt={4}>
+        <Typography variant="h5" gutterBottom>
+          Related Articles
+        </Typography>
         {research?.articles.map((article: any) => (
-          <div key={article.id} className="article-card">
-            <h3>{article.title}</h3>
-            <p>
-              <strong>Abstract:</strong> {article.abstract}
-            </p>
-            <p>
-              <strong>Link:</strong>{' '}
-              <a href={article.link} target="_blank" rel="noopener noreferrer">
-                {article.link}
-              </a>
-            </p>
-            <p>
-              <strong>DOI:</strong> {article.doi}
-            </p>
-            <p>
-              <strong>PDF URL:</strong>{' '}
-              <a href={article.pdf_url} target="_blank" rel="noopener noreferrer">
-                {article.pdf_url}
-              </a>
-            </p>
-            <p>
-              <strong>Source:</strong> {article.source}
-            </p>
-            <p>
-              <strong>Source ID:</strong> {article.source_id}
-            </p>
-          </div>
+          <Card key={article.id} sx={{ mb: 2 }}>
+            <CardContent>
+              <Typography variant="h6">{article.title}</Typography>
+              <Typography>
+                <strong>Abstract:</strong> {article.abstract}
+              </Typography>
+              <Typography>
+                <strong>Link:</strong>{' '}
+                <Link href={article.link} target="_blank" rel="noopener noreferrer">
+                  {article.link}
+                </Link>
+              </Typography>
+              <Typography>
+                <strong>DOI:</strong> {article.doi}
+              </Typography>
+              <Typography>
+                <strong>PDF URL:</strong>{' '}
+                <Link href={article.pdf_url} target="_blank" rel="noopener noreferrer">
+                  {article.pdf_url}
+                </Link>
+              </Typography>
+              <Typography>
+                <strong>Source:</strong> {article.source}
+              </Typography>
+              <Typography>
+                <strong>Source ID:</strong> {article.source_id}
+              </Typography>
+              <Box mt={2}>
+                <Typography>
+                  <strong>Authors:</strong>
+                </Typography>
+                <List dense>
+                  {article.authors.map((author: any) => (
+                    <ListItem key={author.id}>
+                      <ListItemText primary={author.name} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            </CardContent>
+          </Card>
         ))}
-      </div>
+      </Box>
     </div>
   );
 };

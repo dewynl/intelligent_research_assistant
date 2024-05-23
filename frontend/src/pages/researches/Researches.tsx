@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { css } from '@emotion/css';
 import { useQuery } from '@tanstack/react-query';
-import axiosInstance from '../../axios';
-import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { css } from '@emotion/css';
+
+import axiosInstance from '../../axios';
 import Loading from '../../components/Loading';
 
 const styles = {
