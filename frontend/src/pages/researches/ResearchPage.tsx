@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../axios';
 import Loading from '../../components/Loading';
-import { Box, Card, CardContent, Chip, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Box, Card, CardContent, Chip, Grid, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { css } from '@emotion/css';
 
 const pageContainer = css`
@@ -28,13 +28,18 @@ const ResearchPage = () => {
     refetchInterval: 5000,
   });
 
+  const { isLoading: areCategoriesLoading, data: inferredCategories } = useQuery({
+    queryKey: ['getResearchInferredCategories', researchId],
+    queryFn: () => axiosInstance.get(`/research/${researchId}/inferred-categories`).then((res) => res.data),
+  });
+
   useEffect(() => {
     if (data) {
       setResearch(data);
     }
   }, [data]);
  
-  if (isLoading) {
+  if (isLoading || areCategoriesLoading) {
     return (
       <Loading />
     );
@@ -75,6 +80,26 @@ const ResearchPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      {inferredCategories && (
+        <Box mt={4}>
+        <Typography variant="h5" gutterBottom>
+          Inferred Categories
+        </Typography>
+        <Grid container spacing={2}>
+          {Object.entries(inferredCategories).map(([category, percentage]) => (
+            <Grid item xs={12} sm={6} md={4} key={category}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">{category.replace(/_/g, ' ')}</Typography>
+                  <Typography variant="body1">{`${percentage}`}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+      )}
 
       <Box mt={4}>
         <Typography variant="h5" gutterBottom>
