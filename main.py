@@ -1,6 +1,6 @@
 import logging
 from typing import List
-from fastapi import FastAPI, WebSocket, Request, Depends, Body
+from fastapi import FastAPI, Request, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session, joinedload
 
@@ -23,16 +23,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    while True:
-        data = await websocket.receive_text()
-        # Process the received data and send a response if needed
-        await websocket.send_text(f"Message received: {data}")
-
 
 @app.get("/search/{platform}")
 async def search_data(request: Request, platform:str):
@@ -88,8 +78,3 @@ def get_research_inferred_categories(_: Request, research_id: str, db_conn: Sess
 
     predicted_classes = predict_article_categories(combined_articles)
     return predicted_classes
-
-
-@app.get('/research/{research_id}/find-related-articles')
-def find_related_articles(_: Request, research_id: str, db_conn: Session = Depends(get_db)):
-    pass

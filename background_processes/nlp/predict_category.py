@@ -21,8 +21,8 @@ def predict_article_categories(text: str):
     new_abstract_tfidf = loaded_vectorizer.transform([preprocessed_text])
 
     # Predict the main category
-    predicted_category = loaded_model.predict(new_abstract_tfidf)
-    print("Predicted Category:", predicted_category[0])
+    # predicted_category = loaded_model.predict(new_abstract_tfidf)
+    # print("Predicted Category:", predicted_category[0])
 
     # Get the decision function values
     decision_values = loaded_model.decision_function(new_abstract_tfidf)

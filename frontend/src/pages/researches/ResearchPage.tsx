@@ -25,7 +25,6 @@ const ResearchPage = () => {
   const { isLoading, error, data } = useQuery({
     queryKey: ['getResearch', researchId],
     queryFn: () => axiosInstance.get(`/research/${researchId}`).then((res) => res.data),
-    refetchInterval: 5000,
   });
 
   const { isLoading: areCategoriesLoading, data: inferredCategories } = useQuery({
@@ -38,7 +37,7 @@ const ResearchPage = () => {
       setResearch(data);
     }
   }, [data]);
- 
+
   if (isLoading || areCategoriesLoading) {
     return (
       <Loading />
@@ -103,51 +102,28 @@ const ResearchPage = () => {
 
       <Box mt={4}>
         <Typography variant="h5" gutterBottom>
+          Associated Articles
+        </Typography>
+        <List>
+          {research.articles.map((article: any) => (
+            <ListItem key={article.id}>
+              <ListItemText
+                primary={
+                  <Link href={article.pdf_url || article.link} target="_blank" rel="noopener">
+                    {article.title}
+                  </Link>
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+
+      <Box mt={4}>
+        <Typography variant="h5" gutterBottom>
           Related Articles
         </Typography>
-        {research?.articles.map((article: any) => (
-          <Card key={article.id} sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography variant="h6">{article.title}</Typography>
-              <Typography>
-                <strong>Abstract:</strong> {article.abstract}
-              </Typography>
-              <Typography>
-                <strong>Link:</strong>{' '}
-                <Link href={article.link} target="_blank" rel="noopener noreferrer">
-                  {article.link}
-                </Link>
-              </Typography>
-              <Typography>
-                <strong>DOI:</strong> {article.doi}
-              </Typography>
-              <Typography>
-                <strong>PDF URL:</strong>{' '}
-                <Link href={article.pdf_url} target="_blank" rel="noopener noreferrer">
-                  {article.pdf_url}
-                </Link>
-              </Typography>
-              <Typography>
-                <strong>Source:</strong> {article.source}
-              </Typography>
-              <Typography>
-                <strong>Source ID:</strong> {article.source_id}
-              </Typography>
-              <Box mt={2}>
-                <Typography>
-                  <strong>Authors:</strong>
-                </Typography>
-                <List dense>
-                  {article.authors.map((author: any) => (
-                    <ListItem key={author.id}>
-                      <ListItemText primary={author.name} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            </CardContent>
-          </Card>
-        ))}
+        <Typography>Related articles will be displayed here once available.</Typography>
       </Box>
     </div>
   );

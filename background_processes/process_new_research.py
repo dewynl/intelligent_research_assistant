@@ -53,7 +53,7 @@ def summarize_research():
         if research:
             all_abstracts = "\n\n".join([article.abstract for article in research.articles])
             summarizer = pipeline("summarization", model="t5-base", tokenizer="t5-base", framework="pt")
-            summary = summarizer(all_abstracts, max_length=500, min_length=50, do_sample=False)
+            summary = summarizer(all_abstracts, max_length=750, min_length=100, do_sample=False)
             research.summary = summary[0]['summary_text']
             research.summary_generation_status = Status.DONE
             db_conn.commit()
