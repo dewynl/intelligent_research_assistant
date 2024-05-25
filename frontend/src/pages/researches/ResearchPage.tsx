@@ -21,6 +21,7 @@ const topRowContainerStyles = css`
 const ResearchPage = () => {
   const { researchId } = useParams();
   const [research, setResearch] = useState<any>(undefined);
+  const [relatedArticles, setRelatedArticles] = useState<[]>([]);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ['getResearch', researchId],
@@ -37,6 +38,28 @@ const ResearchPage = () => {
       setResearch(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    const socket = new WebSocket('ws://localhost:8000/ws');
+
+    socket.onopen = () => {
+      console.log('Connected to the server')
+      socket.send(JSON.stringify({ research_id: researchId }));
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log(data)
+      if (data.related_articles) {
+        setRelatedArticles(data.related_articles);
+      }
+    };
+
+    return () => {
+      console.log('Disconnected from the server')
+      socket.close();
+    };
+  }, [researchId]);
 
   if (isLoading || areCategoriesLoading) {
     return (
@@ -123,7 +146,17 @@ const ResearchPage = () => {
         <Typography variant="h5" gutterBottom>
           Related Articles
         </Typography>
-        <Typography>Related articles will be displayed here once available.</Typography>
+        {relatedArticles.map((article: any) => (
+            <ListItem key={article.id}>
+              <ListItemText
+                primary={
+                  <Link href={article.pdf_url || article.link} target="_blank" rel="noopener">
+                    {article.title}
+                  </Link>
+                }
+              />
+            </ListItem>
+          ))}
       </Box>
     </div>
   );
