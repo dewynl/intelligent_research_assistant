@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../axios';
 import Loading from '../../components/Loading';
-import { Box, Card, CardContent, Chip, Grid, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Box, Card, CardContent, Chip, Grid, LinearProgress, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { css } from '@emotion/css';
 
 const pageContainer = css`
@@ -22,6 +22,7 @@ const ResearchPage = () => {
   const { researchId } = useParams();
   const [research, setResearch] = useState<any>(undefined);
   const [relatedArticles, setRelatedArticles] = useState<[]>([]);
+  const [loadingRelatedArticles, setLoadingRelatedArticles] = useState<boolean>(false);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ['getResearch', researchId],
@@ -44,6 +45,7 @@ const ResearchPage = () => {
 
     socket.onopen = () => {
       console.log('Connected to the server')
+      setLoadingRelatedArticles(true)
       socket.send(JSON.stringify({ research_id: researchId }));
     };
 
@@ -51,12 +53,19 @@ const ResearchPage = () => {
       const data = JSON.parse(event.data);
       if (data.related_articles) {
         setRelatedArticles(data.related_articles);
+        setLoadingRelatedArticles(false)
       }
     };
+
+    socket.onerror = (error) => {
+      console.error('Server error:', error);
+      setLoadingRelatedArticles(false)
+    }
 
     return () => {
       console.log('Disconnected from the server')
       socket.close();
+      setLoadingRelatedArticles(false)
     };
   }, [researchId]);
 
@@ -145,17 +154,26 @@ const ResearchPage = () => {
         <Typography variant="h5" gutterBottom>
           Related Articles
         </Typography>
-        {relatedArticles.map((article: any) => (
-            <ListItem key={article.id}>
-              <ListItemText
-                primary={
-                  <Link href={article.pdf_url || article.link} target="_blank" rel="noopener">
-                    {article.title}
-                  </Link>
-                }
-              />
-            </ListItem>
-          ))}
+        {loadingRelatedArticles ? 
+        <div style={{display: 'flex', gap: '4px', flexDirection: 'column'}}>
+          Loading related articles...
+          <LinearProgress />
+        </div> : (
+        <>
+          {relatedArticles.map((article: any) => (
+              <ListItem key={article.id}>
+                <ListItemText
+                  primary={
+                    <Link href={article.pdf_url || article.link} target="_blank" rel="noopener">
+                      {article.title}
+                    </Link>
+                  }
+                />
+              </ListItem>
+            ))
+          }
+        </>
+      )}
       </Box>
     </div>
   );
