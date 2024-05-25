@@ -49,7 +49,6 @@ const ResearchPage = () => {
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log(data)
       if (data.related_articles) {
         setRelatedArticles(data.related_articles);
       }
