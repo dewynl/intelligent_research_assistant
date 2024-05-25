@@ -8,7 +8,8 @@ celery_broker_url = os.environ.get('CELERY_BROKER_URL', "redis://localhost:6379/
 celery_tasks_paths = [
     'data_sources.arxiv',
     'background_processes.create_research',
-    'background_processes.process_new_research'
+    'background_processes.process_new_research',
+    'background_processes.find_related_articles',
 ]
 
 celery_app = Celery(__name__, broker=celery_broker_url, backend=celery_broker_url, include=celery_tasks_paths)

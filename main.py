@@ -1,20 +1,27 @@
 import logging
+from uuid import uuid4
 from typing import List
-from fastapi import FastAPI, Request, Depends, Body
+from fastapi import FastAPI, Request, Depends, Body, WebSocket, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session, joinedload
+from starlette.websockets import WebSocketDisconnect
 
 from background_processes.nlp.predict_category import predict_article_categories
+from celery_setup import celery_app
 from data_sources.data_extractor import DataExtractor
 from db import create_all_tables, get_db, Article, Research
 from sqlalchemy import func
 
+from helpers.websocket_manager import websocket_manager
+
+
 logging.basicConfig(level=logging.DEBUG)
+
+origins = ["*"]
 
 create_all_tables()
 app = FastAPI()
 
-origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,6 +30,37 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.websocket("/ws")
+async def research_websocket(websocket: WebSocket):
+    await websocket.accept()
+    connection_id = str(uuid4())
+    websocket_manager.add_connection(connection_id, websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_json()
+            research_id = data.get("research_id")
+            if research_id:
+                await websocket.send_json({"status": "processing"})
+                print(f"Received research request: {research_id}")
+
+                celery_app.send_task('background_processes.find_related_articles.find_related_articles',
+                                     args=[research_id],
+                                     kwargs={'connection_id': connection_id})
+
+    except WebSocketDisconnect:
+        websocket_manager.remove_websocket(connection_id)
+
+
+@app.post("/related-articles/{connection_id}")
+async def receive_related_articles(connection_id: str, related_articles: dict):
+    websocket = websocket_manager.get_connection(connection_id)
+    if websocket:
+        await websocket.send_json(related_articles)
+    else:
+        raise HTTPException(status_code=404, detail="WebSocket connection not found")
 
 @app.get("/search/{platform}")
 async def search_data(request: Request, platform:str):
