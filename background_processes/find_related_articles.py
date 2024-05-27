@@ -20,7 +20,7 @@ def find_related_articles(research_id, connection_id=None):
         extractor = DataExtractor.get_extractor_class(platform=platform)
         query = ' '.join(research.keywords)
         if extractor:
-            results = extractor.get_results(query)
+            results = extractor.get_results(query, max_results=10)
             results = [result.model_dump() for result in results]
             related_articles.extend(results)
 
