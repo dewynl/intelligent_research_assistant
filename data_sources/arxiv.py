@@ -42,7 +42,7 @@ class ArxivExtractor(DataExtractor):
         super().__init__()
         self.client = arxiv.Client()
 
-    def get_results(self, query: str, offset=0, max_results=10) -> List[ArticleListItem]:
+    def get_results(self, query: str, offset=0, max_results=50) -> List[ArticleListItem]:
         # Extract keywords from the query for better search results.
         keywords = extract_keywords(query)
         joined_keywords = " ".join(keywords)
