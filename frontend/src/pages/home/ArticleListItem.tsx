@@ -4,6 +4,10 @@ import { Article } from '../../schemas';
 import { Checkbox, Link } from '@mui/material';
 import { css } from '@emotion/css';
 
+const articleListItemCotnainerStyles = css`
+  width: 100%;	
+`;
+
 const titleRowStyles = css`
   display: flex;
   flex-direction: row;
@@ -27,7 +31,7 @@ const ArticleListItem = ({
 
 
   return (
-    <div>
+    <div className={articleListItemCotnainerStyles}>
       <div className={titleRowStyles}>
         <Checkbox checked={isSelected} onChange={onChange} />
         <Link href={link} target="_blank" rel="noreferrer">
