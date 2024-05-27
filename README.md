@@ -1,31 +1,34 @@
 # Online Research Assistant
 
-This project is an online research assistant that uses Python and React.
+The Intelligent Research Assistant Application is a web-based tool designed to streamline and enhance the online academic research process. By leveraging intelligent agents and natural language processing (NLP) techniques, this application aims to assist researchers in finding, analyzing, and organizing relevant scholarly articles more efficiently.
+Features
+
+- **Intelligent Search**: Users can enter keywords related to their research topic, and the application fetches relevant articles from the arXiv API.
+- **Article Preprocessing**: The fetched articles undergo text preprocessing using advanced NLP techniques, including tokenization, stopword removal, lemmatization, and vectorization.
+- **Summary Generation**: The application generates concise summaries by combining the abstracts of selected articles, providing researchers with a quick overview of the content.
+- **Research Categorization**: A trained machine learning model is employed to categorize articles into predefined research areas, helping users identify the most relevant content for their needs.
+- **Related Article Suggestion**: The application proactively suggests related articles based on the user's current research collection, facilitating the discovery of additional relevant resources.
+- **Keyword Extraction**: The preprocessed article text is analyzed to extract the most significant keywords using a co-occurrence-based approach, enabling users to quickly grasp the main themes and concepts.
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Prerequisites
+### How to Run
 
-What things you need to install the software and how to install them:
+This is a step by step series of examples that tell you how to get a development environment running:
 
-- Python
-- Node.js and npm
-- React
-
-### Installing
-
-A step by step series of examples that tell you how to get a development environment running:
-
-1. Clone the repository
-2. Install Docker.
-3. Build Docker Compose: `docker compose build`
-4. Run Docker Compose: `docker compose up`
-
-## Running the tests
-
-Explain how to run the automated tests for this system.
+1. Clone the repository: `https://github.com/dewynl/intelligent_research_assistant`
+2. Create a pyenv virtual environment: `python -m venv ./venv`
+3. Install all dependencies: `pip install -r requirements.txt`
+4. Run the FastAPI dev server: `uvicorn main:app --reload`
+5. Run Celery workers: `celery -A celery_setup.celery_app worker --loglevel=info`
+6. Run Celery beat: `celery -A celery_setup.celery_app beat --lglevel=info`
+7. Run the React App:
+   - Go to the front end app directory: `cd frontend`
+   - Install all dependencies: `yarn install`
+   - Run the react application: `yarn start`
+8. Go to `http://localhost:3000/` to start using the application.
 
 ## Helpful Commands
 
@@ -40,7 +43,10 @@ Explain how to run the automated tests for this system.
 ## Built With
 
 - [Python](https://www.python.org/)
-- [React](https://reactjs.org/)
+- **Frontend**: [React](https://reactjs.org/)
+- **Backend**: FastAPI
+- **NLP Libraries**: NLTK
+- **Machine Learning Frameworks**: Sci-Kit Learn
 
 ## Contributing
 
@@ -49,7 +55,3 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-- TBD
