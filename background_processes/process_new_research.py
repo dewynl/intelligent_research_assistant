@@ -13,13 +13,13 @@ def process_new_research():
     try:
         db_conn = next(get_db())
 
-        unprocessed_research = db_conn.query(Research).filter(
-            Research.research_preprocess_status == Status.NOT_PROCESSED).first()
-        unprocessed_research.research_preprocess_status = Status.IN_PROGRESS
-        db_conn.commit()  # Updating status so another worker doesn't pick it up.
+        unprocessed_research = db_conn.query(Research).filter(Research.research_preprocess_status == Status.NOT_PROCESSED).first()
 
-        all_abstracts = ''
         if unprocessed_research:
+            unprocessed_research.research_preprocess_status = Status.IN_PROGRESS
+            db_conn.commit()  # Updating status so another worker doesn't pick it up.
+
+            all_abstracts = ''
             for article in unprocessed_research.articles:
                 processed_title, vectorized_title = preprocess_text(article.title)
                 processed_abstract, vectorized_abstract = preprocess_text(article.abstract)
@@ -31,11 +31,12 @@ def process_new_research():
 
                 all_abstracts += article.abstract + '\n\n'
 
-        keywords = extract_keywords(all_abstracts) if all_abstracts else []
-        unprocessed_research.keywords = keywords
-        unprocessed_research.research_preprocess_status = Status.DONE
+            keywords = extract_keywords(all_abstracts) if all_abstracts else []
+            unprocessed_research.keywords = keywords
+            unprocessed_research.research_preprocess_status = Status.DONE
 
-        db_conn.commit()
+            db_conn.commit()
+
     except Exception as e:
         logging.error(f"Error occurred while summarizing research: {str(e)}")
         db_conn.rollback()
