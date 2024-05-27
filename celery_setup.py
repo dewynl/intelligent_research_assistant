@@ -18,10 +18,10 @@ celery_app.conf.broker_connection_retry_on_startup = True
 celery_app.conf.beat_schedule = {
     'process_new_articles': {
         'task': 'background_processes.process_new_research.process_new_research',
-        'schedule': timedelta(minutes=10),
+        'schedule': timedelta(minutes=1),
     },
     'summarize_new_research': {
         'task': 'background_processes.process_new_research.summarize_research',
-        'schedule': timedelta(minutes=10),
+        'schedule': timedelta(minutes=1),
     }
 }
