@@ -12,7 +12,6 @@ from transformers import pipeline
 def process_new_research():
     try:
         db_conn = next(get_db())
-
         unprocessed_research = db_conn.query(Research).filter(Research.research_preprocess_status == Status.NOT_PROCESSED).first()
 
         if unprocessed_research:
@@ -48,14 +47,15 @@ def summarize_research():
     try:
         db_conn = next(get_db())
         research = db_conn.query(Research).filter(Research.summary_generation_status == Status.NOT_PROCESSED).first()
-        research.summary_generation_status = Status.IN_PROGRESS
-        db_conn.commit()
-
         if research:
+            research.summary_generation_status = Status.IN_PROGRESS
+            db_conn.commit()
+
             all_abstracts = "\n\n".join([article.abstract for article in research.articles])
             summarizer = pipeline("summarization", model="t5-base", tokenizer="t5-base", framework="pt")
             summary = summarizer(all_abstracts, max_length=750, min_length=100, do_sample=False)
             research.summary = summary[0]['summary_text']
+
             research.summary_generation_status = Status.DONE
             db_conn.commit()
         else:

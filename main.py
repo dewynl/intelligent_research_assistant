@@ -51,7 +51,7 @@ async def research_websocket(websocket: WebSocket):
                                      kwargs={'connection_id': connection_id})
 
     except WebSocketDisconnect:
-        websocket_manager.remove_websocket(connection_id)
+        websocket_manager.remove_connection(connection_id)
 
 
 @app.post("/related-articles/{connection_id}")
@@ -102,7 +102,6 @@ def get_researches(_: Request, db: Session = Depends(get_db)):
 @app.get('/research/{research_id}')
 def get_research(_: Request, research_id: str, db_conn: Session = Depends(get_db)):
     research = db_conn.query(Research).options(joinedload(Research.articles).joinedload(Article.authors)).filter_by(id=research_id).first()
-    print(research.id)
     return research
 
 
@@ -115,4 +114,5 @@ def get_research_inferred_categories(_: Request, research_id: str, db_conn: Sess
         combined_articles += article.abstract + '\n\n'
 
     predicted_classes = predict_article_categories(combined_articles)
-    return predicted_classes
+    sorted_dict = dict(sorted(predicted_classes.items(), key=lambda x: float(x[1][:-1]), reverse=True))
+    return sorted_dict

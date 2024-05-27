@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../axios';
 import Loading from '../../components/Loading';
-import { Box, Card, CardContent, Chip, Grid, LinearProgress, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Box, Card, CardContent, Chip, CircularProgress, Grid, LinearProgress, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { css } from '@emotion/css';
 
 const pageContainer = css`
@@ -27,6 +27,7 @@ const ResearchPage = () => {
   const { isLoading, error, data } = useQuery({
     queryKey: ['getResearch', researchId],
     queryFn: () => axiosInstance.get(`/research/${researchId}`).then((res) => res.data),
+    refetchInterval: 5000,
   });
 
   const { isLoading: areCategoriesLoading, data: inferredCategories } = useQuery({
@@ -101,12 +102,18 @@ const ResearchPage = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card style={{width: '100%'}}>
           <CardContent>
             <Typography variant="h5" gutterBottom>
               Summary
             </Typography>
-            <Typography>{research?.summary}</Typography>
+            <div>
+              {research.summary_generation_status !== 'done' ?  
+              <div style={{display: 'flex', justifyContent: 'center'}}>
+                <CircularProgress />
+              </div> 
+              : <Typography>{research?.summary}</Typography>}
+            </div>
           </CardContent>
         </Card>
       </div>
