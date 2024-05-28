@@ -4,8 +4,12 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+from background_processes.nlp.common import download_nltk_resources
+
 
 def preprocess_text(text):
+    download_nltk_resources()
+
     # Lowercase conversion
     # This step converts all the characters in the text to lowercase
     # It helps in treating words consistently regardless of their case

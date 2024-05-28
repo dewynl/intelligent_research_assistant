@@ -10,19 +10,24 @@ import logging
 from background_processes.nlp import preprocess_text
 from background_processes.nlp.common import download_nltk_resources
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 def train_model():
     download_nltk_resources()
+
     # Load the CSV dataset
-    df = pd.read_csv('arxiv_training_data.csv')
+    df = pd.read_csv("arxiv_training_data.csv")
 
     # Preprocess the abstracts
-    df['cleaned_abstract'] = df['abstract'].apply(preprocess_text)
+    df["cleaned_abstract"] = df["abstract"].apply(preprocess_text)
 
     # Split the dataset into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(df['cleaned_abstract'], df['main_category'], test_size=0.2,
-                                                        random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        df["cleaned_abstract"], df["main_category"], test_size=0.2, random_state=42
+    )
 
     # Create a TF-IDF vectorizer
     vectorizer = TfidfVectorizer()
@@ -31,7 +36,7 @@ def train_model():
     X_train_tfidf = vectorizer.fit_transform(X_train)
 
     # Train the SVM model
-    svm_model = SVC(kernel='linear', C=1.0, random_state=42)
+    svm_model = SVC(kernel="linear", C=1.0, random_state=42)
     svm_model.fit(X_train_tfidf, y_train)
 
     # Transform the testing data
@@ -40,9 +45,9 @@ def train_model():
     # Evaluate the model
     y_pred = svm_model.predict(X_test_tfidf)
     accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred, average='weighted')
-    recall = recall_score(y_test, y_pred, average='weighted')
-    f1 = f1_score(y_test, y_pred, average='weighted')
+    precision = precision_score(y_test, y_pred, average="weighted")
+    recall = recall_score(y_test, y_pred, average="weighted")
+    f1 = f1_score(y_test, y_pred, average="weighted")
 
     logging.info(f"Accuracy: {accuracy:.4f}")
     logging.info(f"Precision: {precision:.4f}")
@@ -50,8 +55,7 @@ def train_model():
     logging.info(f"F1-score: {f1:.4f}")
 
     # Save the trained model and vectorizer
-    joblib.dump(svm_model, 'svm_model.pkl')
-    joblib.dump(vectorizer, 'tfidf_vectorizer.pkl')
+    joblib.dump(svm_model, "svm_model.pkl")
+    joblib.dump(vectorizer, "tfidf_vectorizer.pkl")
 
     logging.info("Model and vectorizer saved successfully.")
-
