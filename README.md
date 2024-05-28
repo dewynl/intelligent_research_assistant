@@ -30,6 +30,12 @@ This is a step by step series of examples that tell you how to get a development
    - Run the react application: `yarn start`
 8. Go to `http://localhost:3000/` to start using the application.
 
+### Docker
+
+If you have Docker, you can also run the application by doing:
+1. `docker compose build`
+2. `docker compose up`
+
 ## Helpful Commands
 
 - `docker compose build` - Build the project in Docker
