@@ -1,4 +1,4 @@
-# Online Research Assistant
+# Intelligent Research Assistant
 
 The Intelligent Research Assistant Application is a web-based tool designed to streamline and enhance the online academic research process. By leveraging intelligent agents and natural language processing (NLP) techniques, this application aims to assist researchers in finding, analyzing, and organizing relevant scholarly articles more efficiently.
 Features
