@@ -3,8 +3,12 @@ from nltk.tokenize import word_tokenize
 from collections import defaultdict
 import string
 
+from background_processes.nlp.common import download_nltk_resources
+
 
 def extract_keywords(text):
+    download_nltk_resources()
+
     # Tokenize the text into words
     # This step breaks the text into individual words for further processing
     words = word_tokenize(text.lower())
